@@ -1,0 +1,44 @@
+﻿@model ICollection<Product>
+
+@{
+    ViewData["Title"] = "Product Catalogue";
+}
+
+<h1>Product Catalogue</h1>
+
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text">@product.Description</p>
+                    <p class="card-text">Price: @product.Price.ToString("C")</p>
+                    <p class="card-text">Available Quantity: @product.AvailableQuantity</p>
+                </div>
+                <div class="card-footer">
+                    @if (product.AvailableQuantity > 0)
+                    {
+                        <button class="btn btn-primary" data-product-id="@product.Id" asp-action="AddToCart">
+                            Add to Cart
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Out of Stock</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function addToCart(button) {
+        var productId = $(button).data("product-id");
+        // You can use JavaScript or AJAX to add the product to the cart.
+        // Example: Send a request to your server to add the product to the cart.
+        alert("Product added to the cart!");
+    }
+</script>
