@@ -1,0 +1,60 @@
+﻿@model ICollection<ProductCart>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<h1>Shopping Cart</h1>
+
+@if (Model.Count == 0)
+{
+    <p>Your shopping cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>
+                        @item.ProductQuantity
+                    </td>
+                    <td>@item.Product.Price.ToString("C")</td>
+                    <td>@(item.Product.Price * item.ProductQuantity)</td>
+                    <td>
+                        <form asp-controller="Store" asp-action="IncreaseQuantity" method="post">
+                            <input type="hidden" name="productCartId" value="@item.Id" />
+                            <button type="submit" class="btn btn-primary btn-sm">+</button>
+                        </form>
+                        <form asp-controller="Store" asp-action="DecreaseQuantity" method="post">
+                            <input type="hidden" name="productCartId" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">-</button>
+                        </form>
+                    </td>
+                  
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-right">
+        <h4>Total: @Model.Sum(item => item.Product.Price * item.ProductQuantity).ToString("C")</h4>
+    </div>
+  
+
+    <div class="text-center">
+        <a asp-controller="Store" asp-action="Order" class="btn btn-primary">Checkout</a>
+        <a asp-controller="Store" asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+    </div>
+}

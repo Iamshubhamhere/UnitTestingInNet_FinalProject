@@ -12,8 +12,8 @@ using UnitTestingInNet_FinalProject.Data;
 namespace UnitTestingInNet_FinalProject.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20231019194117_Initial")]
-    partial class Initial
+    [Migration("20231022062826_AddedPropertyyyy")]
+    partial class AddedPropertyyyy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -130,6 +133,30 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.ProductCart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("productCarts");
+                });
+
             modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Order", b =>
                 {
                     b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
@@ -147,6 +174,25 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("DestinationCountry");
+                });
+
+            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.ProductCart", b =>
+                {
+                    b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UnitTestingInNet_FinalProject.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

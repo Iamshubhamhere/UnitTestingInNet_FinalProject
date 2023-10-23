@@ -1,0 +1,82 @@
+﻿@model UnitTestingInNet_FinalProject.Models.OrderViewModel
+
+@{
+    ViewData["Title"] = "Confirm Order";
+}
+
+<h1>Confirm Order</h1>
+
+<div class="container">
+    <h3>Order Summary</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.CartItems != null && Model.CartItems.Count > 0)
+            {
+                foreach (var cartItem in Model.CartItems)
+                {
+                    <tr>
+                        <td>@cartItem.Product.Name</td>
+                        <td>@cartItem.ProductQuantity</td>
+                        <td>@(cartItem.Product.Price * cartItem.ProductQuantity)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">No items in the cart.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Order Details</h3>
+    <!-- Change the form action to point to the action that updates the price based on the selected country -->
+    <form asp-action="ConfirmOrder" method="post">
+        <div class="form-group">
+            <label asp-for="Order.Address">Address</label>
+            <input asp-for="Order.Address" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Order.MailingCode">Mailing Code</label>
+            <input asp-for="Order.MailingCode" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Order.DestinationCountryId">Destination Country</label>
+            <select asp-for="Order.DestinationCountryId" asp-items="@(new SelectList(Model.AvailableCountries, "Id", "Name"))" class="form-control" onchange="this.form.submit()" required>
+                <option value="">Select a country</option>
+            </select>
+        </div>
+
+        @if (Model != null && Model.CartItems != null)
+        {
+            <div class="form-group">
+                <label>Total Price: @(Model.CartItems.Sum(item => item.Product.Price * item.ProductQuantity).ToString("C"))</label>
+            </div>
+        }
+
+        @if (Model != null && Model.SelectedCountryName != null && Model.SelectedConversionRate != null)
+        {
+            <div class="form-group">
+                <label>Converted Price (@Model.SelectedCountryName Rate): @(Model.CartItems.Sum(item => item.Product.Price * item.ProductQuantity) * Model.SelectedConversionRate).ToString("C")</label>
+            </div>
+        }
+
+        @if (Model != null && Model.SelectedTaxRate != null)
+        {
+            <div class="form-group">
+                <label>Total Price (with Taxes): @(Model.CartItems.Sum(item => item.Product.Price * item.ProductQuantity) * Model.SelectedConversionRate * (1 + Model.SelectedTaxRate)).ToString("C")</label>
+            </div>
+        }
+
+        <!-- The button to finally submit the order after all information is entered and prices are updated -->
+        <button type="submit" class="btn btn-primary">Submit Order</button>
+    </form>
+</div>

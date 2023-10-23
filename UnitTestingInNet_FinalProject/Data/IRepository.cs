@@ -7,9 +7,13 @@ namespace UnitTestingInNet_FinalProject.Data
     {
 
         public T Get(Guid id);
-        public ICollection<T> GetAll(); 
-     
-        public T AddItemToCart(Guid id, T item);    
+        public ICollection<T> GetAll();
+       
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        void Remove(T entity);
+        public ICollection<T> SearchProducts(string Key);
     }
 }
  

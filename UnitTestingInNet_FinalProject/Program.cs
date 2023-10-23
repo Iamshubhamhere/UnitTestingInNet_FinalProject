@@ -19,7 +19,9 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddScoped(typeof(IRepository<Product>), typeof(ProductRepository));
-builder.Services.AddScoped(typeof(IRepository<Cart>), typeof(CartRepository));
+builder.Services.AddScoped(typeof(ICartRepository<Cart>), typeof(CartRepository));
+builder.Services.AddScoped(typeof(IRepository<ProductCart>), typeof(ProductCartRepository));
+builder.Services.AddScoped(typeof(IRepository<Country>), typeof(CountryRepository));
 
 var app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())

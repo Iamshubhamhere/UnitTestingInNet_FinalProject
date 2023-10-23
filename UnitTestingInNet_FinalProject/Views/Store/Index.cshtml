@@ -5,7 +5,15 @@
 }
 
 <h1>Product Catalogue</h1>
-
+<!-- Search form -->
+<form asp-controller="Store" asp-action="Search" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" name="query" placeholder="Search products..." />
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </div>
+</form>
 <div class="row">
     @foreach (var product in Model)
     {
@@ -20,9 +28,11 @@
                 <div class="card-footer">
                     @if (product.AvailableQuantity > 0)
                     {
-                        <button class="btn btn-primary" data-product-id="@product.Id" asp-action="AddToCart">
-                            Add to Cart
-                        </button>
+                        <form asp-controller="Store" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="ProductId" value="@product.Id" />
+                            <input type="hidden" name="CartId" value="@ViewData["CartId"]" />
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
                     }
                     else
                     {

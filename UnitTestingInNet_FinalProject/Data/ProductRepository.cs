@@ -17,11 +17,42 @@ namespace UnitTestingInNet_FinalProject.Data
 
         public ICollection<Product> GetAll()
         {
-            return _context.Products.ToList();
+            return _context.Products.OrderBy(product => product.Name).ToList();
         }
-       public Product AddItemToCart(Guid id, Product product)
+
+        public void Add(Product entity)
         {
-            return product;
+            _context.Products.Add(entity);
+            _context.SaveChanges();
         }
+        public void Update(Product entity)
+        {
+            _context.Products.Update(entity);
+            _context.SaveChanges();
+        }
+        public void Delete(Product entity)
+        {
+            if (entity != null)
+            {
+                _context.Products.Remove(entity);
+                _context.SaveChanges();
+            }
+        }
+
+        public void Remove(Product entity)
+        {
+            _context.Products.Remove(entity);
+            _context.SaveChanges();
+        }
+
+        public ICollection<Product> SearchProducts(string key)
+        {
+            ICollection<Product>search = _context.Products.Where(pr =>pr.Name.Contains(key) || pr.Description.Contains(key)).OrderBy(pr =>pr.Name).ToList();
+            return search;
+        }
+        /* void IRepository<Product>.Add(Product entity)
+         {
+             // This method is explicitly implemented and is not accessible outside of the ProductRepository.
+         }*/
     }
 }

@@ -6,6 +6,7 @@ namespace UnitTestingInNet_FinalProject.Data
 {
     public class SeedData
     {
+       
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
             EcommerceContext context = new EcommerceContext(serviceProvider.GetRequiredService<DbContextOptions<EcommerceContext>>());
@@ -112,9 +113,16 @@ namespace UnitTestingInNet_FinalProject.Data
                    
                 }
                 context.SaveChanges();
-                if (context.Carts.Any())
+                
+                if (!context.Carts.Any())
                 {
-                    Cart cart = new Cart();
+                    Cart cart = new Cart()
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = 1// Generate a unique identifier for the cart
+                                             
+                    };
+                   
                     context.Carts.Add(cart);
                     context.SaveChanges();
                 }
@@ -128,5 +136,6 @@ namespace UnitTestingInNet_FinalProject.Data
 
 
         }
+        
     }
 }

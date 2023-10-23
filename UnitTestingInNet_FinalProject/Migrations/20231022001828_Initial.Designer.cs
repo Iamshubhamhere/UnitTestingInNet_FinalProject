@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UnitTestingInNet_FinalProject.Data;
 
@@ -11,9 +12,11 @@ using UnitTestingInNet_FinalProject.Data;
 namespace UnitTestingInNet_FinalProject.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    partial class EcommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20231022001828_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -96,8 +96,7 @@ namespace UnitTestingInNet_FinalProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId")
-                        .IsUnique();
+                    b.HasIndex("CartId");
 
                     b.HasIndex("DestinationCountryId");
 
@@ -158,8 +157,8 @@ namespace UnitTestingInNet_FinalProject.Migrations
             modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Order", b =>
                 {
                     b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
-                        .WithOne("Order")
-                        .HasForeignKey("UnitTestingInNet_FinalProject.Models.Order", "CartId")
+                        .WithMany()
+                        .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -191,12 +190,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Cart", b =>
-                {
-                    b.Navigation("Order")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
