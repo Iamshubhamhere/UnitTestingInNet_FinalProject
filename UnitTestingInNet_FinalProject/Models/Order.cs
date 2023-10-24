@@ -25,6 +25,7 @@ namespace UnitTestingInNet_FinalProject.Models
 
         [ForeignKey("CartId")]
         public Cart Cart { get; set; }
+        public decimal TotalPrice { get; set; }
 
     }
 }

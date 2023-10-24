@@ -5,6 +5,8 @@
 
         public Order Order { get; set; } // Include the Order model if necessary
         public List<ProductCart> CartItems { get; set; }
+        public ProductCart ProductCart { get; set; }
+
         public List<Country> AvailableCountries { get; set; }
         public decimal TotalPrice { get; set; }
         public string SelectedCountryName { get; set; }

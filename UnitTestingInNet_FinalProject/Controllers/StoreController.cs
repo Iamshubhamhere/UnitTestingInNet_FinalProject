@@ -138,17 +138,14 @@ namespace UnitTestingInNet_FinalProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmOrder(OrderViewModel model)
+        public IActionResult ConfirmPrice([Bind("OrderDestinationCountryId")] Guid OrderDestinationCountryId)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+          
 
             try
             {
-                _businessLogicLayer.ConfirmOrder(model);
-                return RedirectToAction("OrderConfirmed"); // Redirect to a confirmation page
+                _businessLogicLayer.ConfirmOrder(OrderDestinationCountryId);
+                return RedirectToAction("Order"); // Redirect to a confirmation page
             }
             catch (Exception ex)
             {

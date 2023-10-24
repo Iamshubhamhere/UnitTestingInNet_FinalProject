@@ -47,8 +47,29 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
         }
         public ICollection<Product> SearchProducts(string key)
         {
-            ICollection<Product>Products = _productRepository.SearchProducts(key);
-            return Products;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    throw new ArgumentException("Search key cannot be null or whitespace.", nameof(key));
+                }
+
+                if (_productRepository == null)
+                {
+                    throw new InvalidOperationException("_context is null. Please check your database context initialization.");
+                }
+
+
+                ICollection<Product> Products = _productRepository.SearchProducts(key);
+                return Products;
+              
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred during product search: {ex.Message}");
+             
+                return null; 
+            }
         }
         public Cart GetCartById(Guid Id)
         {
@@ -281,44 +302,53 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             }
             return country;
         }
-        public void ConfirmOrder(OrderViewModel orderViewModel)
+        public OrderViewModel ConfirmOrder(Guid countryId)
         {
-            // Retrieve the user's cart
-            Cart userCart = _cartRepository.GetCart(1); // Change the user ID to match your logic
+            // Ensure the OrderViewModel is valid and contains necessary data
+            if (countryId == null )
+            {
+                throw new InvalidOperationException("Invalid order data.");
+            }
 
-            if (userCart == null || orderViewModel.CartItems.Count == 0)
+            // Retrieve the user's cart
+            Cart userCart = _cartRepository.GetCart(1); // This needs to match the logic you use to identify the user's cart
+                                                        // Retrieve the items in the cart
+            if (userCart == null)
             {
                 throw new InvalidOperationException("Cart is empty or not found.");
             }
+            List<ProductCart> cartItems = _productCartRepository.GetAll()
+                .Where(pc => pc.CartId == userCart.Id)
+                .ToList();
 
-            // Calculate the total ordered quantity
-            int totalOrderedQuantity = orderViewModel.CartItems.Sum(item => item.ProductQuantity);
 
-            // Create a new order
-            Order newOrder = new Order
+            // Retrieve the selected country's details
+            Country selectedCountry = _countryRepository.Get(countryId);
+            if (selectedCountry == null)
             {
-                CartId = userCart.Id, // Assign the user's cart Id
-                DestinationCountryId = orderViewModel.Order.DestinationCountryId, // This should be set by the user's selection in the view
-                Address = orderViewModel.Order.Address, // From orderViewModel, user input
-                MailingCode = orderViewModel.Order.MailingCode, // From orderViewModel, user input
-                OrderedQuantity = totalOrderedQuantity, // Calculated total ordered quantity
-                                                        // ... Set other properties as necessary
-            };
-
-            // Add the new order to the repository
-            _orderRepository.Add(newOrder);
-
-            // Clear the cart items
-            foreach (var item in orderViewModel.CartItems)
-            {
-                _productCartRepository.Remove(item);
+                throw new InvalidOperationException("Selected country not found.");
             }
+           
+            // Calculate the total ordered quantity and total price
+           
+            decimal totalPrice = cartItems.Sum(item => item.Product.Price * item.ProductQuantity);
+            decimal conversionRate = totalPrice * selectedCountry.ConversionRate;
+            decimal taxRate = conversionRate * selectedCountry.TaxRate;
+            decimal FinalTotalPrice = totalPrice + conversionRate + taxRate;
 
-            // Optionally, you might want to clear the Cart as well
-            _cartRepository.Remove(userCart);
 
-            // TODO: You might want to add transaction handling to ensure data consistency
+            OrderViewModel orderViewModel = new OrderViewModel()
+            {
+                TotalPrice = FinalTotalPrice,
+                SelectedConversionRate = conversionRate,
+                SelectedTaxRate = taxRate,
+                SelectedCountryName = selectedCountry.Name,
+                
+            };
+            return orderViewModel;
         }
+
+
 
 
     }
