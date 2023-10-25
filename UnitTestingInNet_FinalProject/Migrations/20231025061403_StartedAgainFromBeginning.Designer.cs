@@ -12,8 +12,8 @@ using UnitTestingInNet_FinalProject.Data;
 namespace UnitTestingInNet_FinalProject.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20231022062826_AddedPropertyyyy")]
-    partial class AddedPropertyyyy
+    [Migration("20231025061403_StartedAgainFromBeginning")]
+    partial class StartedAgainFromBeginning
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,12 +83,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DestinationCountryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("MailingCode")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -97,11 +91,10 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Property<int>("OrderedQuantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("DestinationCountryId");
 
                     b.ToTable("Orders");
                 });
@@ -155,25 +148,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("productCarts");
-                });
-
-            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Order", b =>
-                {
-                    b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
-                        .WithMany()
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UnitTestingInNet_FinalProject.Models.Country", "DestinationCountry")
-                        .WithMany()
-                        .HasForeignKey("DestinationCountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("DestinationCountry");
                 });
 
             modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.ProductCart", b =>

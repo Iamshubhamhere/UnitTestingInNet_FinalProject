@@ -4,6 +4,7 @@ using System.Diagnostics;
 using UnitTestingInNet_FinalProject.Data;
 using UnitTestingInNet_FinalProject.Models;
 using UnitTestingInNet_FinalProject.Models.BusinessLayer;
+using UnitTestingInNet_FinalProject.Models.ViewModel;
 
 namespace UnitTestingInNet_FinalProject.Controllers
 {
@@ -11,9 +12,9 @@ namespace UnitTestingInNet_FinalProject.Controllers
     {
         private BusinessLayer _businessLogicLayer;
         public StoreController(IRepository<Product> productRepository, ICartRepository<Cart> cartRepository, IRepository<ProductCart> productCartRepository,
-            IRepository<Country> countryRepository)
+            IRepository<Country> countryRepository, IRepository<Order> orderRepository)
         {
-            _businessLogicLayer = new BusinessLayer(productRepository, cartRepository, productCartRepository, countryRepository);
+            _businessLogicLayer = new BusinessLayer(productRepository, cartRepository, productCartRepository, countryRepository,orderRepository);
         }
         
 
@@ -34,7 +35,7 @@ namespace UnitTestingInNet_FinalProject.Controllers
         } 
 
 
-        public IActionResult Search(string word)
+        public IActionResult Search(string word) 
         {
             try
             {
@@ -64,7 +65,13 @@ namespace UnitTestingInNet_FinalProject.Controllers
             try
             {               
                 ICollection<ProductCart> ProductsInCart = _businessLogicLayer.GetAllProductInCart();
-                return View(ProductsInCart);
+                ICollection<Country > Countries = _businessLogicLayer.GetAllCountries();
+                CartViewModel cartView = new CartViewModel(Countries)
+                {
+                    ProductCart = ProductsInCart,
+                    
+                };
+                return View(cartView);
             }
             catch
             {
@@ -101,51 +108,15 @@ namespace UnitTestingInNet_FinalProject.Controllers
             }
         }
 
-        public IActionResult Order() 
-        {
-            try
-            {
-                var orderData = _businessLogicLayer.OrderToPlace();
-
-                // Create an instance of OrderViewModel and populate its properties
-                var viewModel = new OrderViewModel
-                {
-                    CartItems = orderData.CartItems,
-                    AvailableCountries = orderData.AvailableCountries,
-                    TotalPrice = orderData.TotalPrice
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentNullException("ORDER NOT found ");
-            }
-        }
-        [HttpGet]
-        public IActionResult ConfirmOrder()
-        {
-            try
-            {
-                OrderViewModel orderViewModel = _businessLogicLayer.OrderToPlace();
-                return View(orderViewModel);
-            }
-            catch (InvalidOperationException ex)
-            {
-                // Handle the exception (e.g., log it and return an error view)
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            }
-        }
 
         [HttpPost]
-        public IActionResult ConfirmPrice([Bind("OrderDestinationCountryId")] Guid OrderDestinationCountryId)
+        public IActionResult Order(Guid OrderDestinationCountryId)
         {
-          
-
             try
-            {
-                _businessLogicLayer.ConfirmOrder(OrderDestinationCountryId);
-                return RedirectToAction("Order"); // Redirect to a confirmation page
+            {             
+                var orderViewModel= _businessLogicLayer.ConfirmOrder(OrderDestinationCountryId);
+
+                return View("Order", orderViewModel);
             }
             catch (Exception ex)
             {
@@ -154,10 +125,47 @@ namespace UnitTestingInNet_FinalProject.Controllers
             }
         }
 
-        public IActionResult OrderConfirmed()
+        public IActionResult OrderConfirmed(OrderViewModel order)
+        {
+            try
+            {
+                Order confirmOrder = new Order
+                {
+                    Address = order.Address,
+                    MailingCode = order.MailingCode,
+                    TotalPrice = order.TotalPrice,
+                    OrderedQuantity = order.OrderedQuantity,    
+
+                    
+                };
+                _businessLogicLayer.ConfirmAddress(confirmOrder);
+                _businessLogicLayer.ClearCart();
+
+                return RedirectToAction("Confirmation");
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception (e.g., log it and return an error view)
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        }
+        public IActionResult Confirmation()
         {
             return View();
         }
+        public IActionResult AllOrder()
+        {
+            try
+            {
 
+
+                ICollection<Order> order = _businessLogicLayer.GetAllOrder();
+                return View(order);
+            }
+            catch
+            {
+                throw new ArgumentNullException("No Items is found ");
+            }
+        }
     }
 }

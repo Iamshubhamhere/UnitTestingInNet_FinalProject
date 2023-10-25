@@ -22,6 +22,7 @@ builder.Services.AddScoped(typeof(IRepository<Product>), typeof(ProductRepositor
 builder.Services.AddScoped(typeof(ICartRepository<Cart>), typeof(CartRepository));
 builder.Services.AddScoped(typeof(IRepository<ProductCart>), typeof(ProductCartRepository));
 builder.Services.AddScoped(typeof(IRepository<Country>), typeof(CountryRepository));
+builder.Services.AddScoped(typeof(IRepository<Order>), typeof(OrderRepository));
 
 var app = builder.Build();
 using (IServiceScope scope = app.Services.CreateScope())

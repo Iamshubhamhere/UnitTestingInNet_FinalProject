@@ -43,6 +43,12 @@ namespace UnitTestingInNet_FinalProject.Data
             _context.Carts.Remove(entity);
             _context.SaveChanges();
         }
+        public void Clear()
+        {
+            ICollection<Cart>ItemRemove = GetAll().ToList();
+            _context.Carts.RemoveRange(ItemRemove);
+            _context.SaveChanges();
+        }
 
     } 
 }

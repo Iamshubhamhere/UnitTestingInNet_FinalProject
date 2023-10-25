@@ -80,12 +80,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DestinationCountryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("MailingCode")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -98,11 +92,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartId")
-                        .IsUnique();
-
-                    b.HasIndex("DestinationCountryId");
 
                     b.ToTable("Orders");
                 });
@@ -158,25 +147,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.ToTable("productCarts");
                 });
 
-            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Order", b =>
-                {
-                    b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
-                        .WithOne("Order")
-                        .HasForeignKey("UnitTestingInNet_FinalProject.Models.Order", "CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UnitTestingInNet_FinalProject.Models.Country", "DestinationCountry")
-                        .WithMany()
-                        .HasForeignKey("DestinationCountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("DestinationCountry");
-                });
-
             modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.ProductCart", b =>
                 {
                     b.HasOne("UnitTestingInNet_FinalProject.Models.Cart", "Cart")
@@ -194,12 +164,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("UnitTestingInNet_FinalProject.Models.Cart", b =>
-                {
-                    b.Navigation("Order")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

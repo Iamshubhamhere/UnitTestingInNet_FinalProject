@@ -9,7 +9,7 @@ namespace UnitTestingInNet_FinalProject.Models
         public int UserId { get; set; }
      
         public HashSet<ProductCart> productCarts = new HashSet<ProductCart>();
-        public Order Order { get; set; }
+      
 
     }
 }

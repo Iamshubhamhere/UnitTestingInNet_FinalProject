@@ -1,0 +1,17 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Confirmation";
+}
+<form asp-action="Confirmation" asp-controller="Store">
+<div class="container mt-5">
+    <div class="jumbotron text-center">
+        <h1>Order Confirmation</h1>
+        <p class="lead">Thank you for your order! Your order has been successfully placed and is now being processed.</p>
+
+        <form asp-action="Index" class="mt-5">
+            <a href="/" class="btn btn-primary">Return to Home Page</a>
+        </form>
+    </div>
+</div>
+</form>

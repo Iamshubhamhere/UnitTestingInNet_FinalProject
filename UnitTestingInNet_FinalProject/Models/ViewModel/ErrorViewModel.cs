@@ -1,4 +1,4 @@
-namespace UnitTestingInNet_FinalProject.Models
+namespace UnitTestingInNet_FinalProject.Models.ViewModel
 {
     public class ErrorViewModel
     {

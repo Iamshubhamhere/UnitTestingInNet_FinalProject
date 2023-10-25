@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UnitTestingInNet_FinalProject.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class StartedAgainFromBeginning : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,8 @@ namespace UnitTestingInNet_FinalProject.Migrations
                 name: "Carts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,6 +49,21 @@ namespace UnitTestingInNet_FinalProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderedQuantity = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    MailingCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -60,34 +76,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderedQuantity = table.Column<int>(type: "int", nullable: false),
-                    DestinationCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MailingCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    CartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_Countries_DestinationCountryId",
-                        column: x => x.DestinationCountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,16 +105,6 @@ namespace UnitTestingInNet_FinalProject.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CartId",
-                table: "Orders",
-                column: "CartId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_DestinationCountryId",
-                table: "Orders",
-                column: "DestinationCountryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_productCarts_CartId",
                 table: "productCarts",
                 column: "CartId");
@@ -144,13 +122,13 @@ namespace UnitTestingInNet_FinalProject.Migrations
                 name: "Catalogues");
 
             migrationBuilder.DropTable(
+                name: "Countries");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "productCarts");
-
-            migrationBuilder.DropTable(
-                name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "Carts");

@@ -1,0 +1,40 @@
+﻿@model ICollection<Order>
+
+@{
+    ViewData["Title"] = "All Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>All Orders</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().OrderedQuantity)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Address)</th>
+                <th>@Html.DisplayNameFor(model => model.First().MailingCode)</th>
+                <th>@Html.DisplayNameFor(model => model.First().TotalPrice)</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => order.OrderedQuantity)</td>
+                    <td>@Html.DisplayFor(modelItem => order.Address)</td>
+                    <td>@Html.DisplayFor(modelItem => order.MailingCode)</td>
+                    <td>@Html.DisplayFor(modelItem => order.TotalPrice)</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No orders found.</p>
+}
+

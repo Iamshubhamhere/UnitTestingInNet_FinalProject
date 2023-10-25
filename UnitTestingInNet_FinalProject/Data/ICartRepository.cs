@@ -12,5 +12,6 @@ namespace UnitTestingInNet_FinalProject.Data
         Cart GetCart(int userId);
         void Update(T entity);
         void Remove(Cart entity);
+         void Clear();
     }
 }

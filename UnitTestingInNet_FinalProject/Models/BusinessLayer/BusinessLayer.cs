@@ -1,23 +1,25 @@
 ﻿using UnitTestingInNet_FinalProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using UnitTestingInNet_FinalProject.Models.ViewModel;
 
 namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 {
     public class BusinessLayer
     {
         private IRepository<Product> _productRepository;
-        private IRepository<Order> _orderRepository;
         private ICartRepository<Cart> _cartRepository;
         private IRepository<ProductCart> _productCartRepository;
         private IRepository<Country> _countryRepository;
+        private IRepository<Order> _orderRepository;
         public BusinessLayer(IRepository<Product> productRepository, ICartRepository<Cart> cartRepository, IRepository<ProductCart> productCartRepository,
-            IRepository<Country> countryRepository)
+            IRepository<Country> countryRepository, IRepository<Order> orderRepository)
         {
             _productRepository = productRepository;
             _cartRepository = cartRepository;
             _productCartRepository = productCartRepository;
             _countryRepository = countryRepository;
+            _orderRepository = orderRepository;
         }
 
         public Product GetProductById(Guid Id)
@@ -27,12 +29,22 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             {
                 throw new ArgumentNullException("Item Not Found");
             }
-            else
-            {
-                return productObtain;
-            }
+            return productObtain;
         }
 
+
+        public ICollection<Country> GetAllCountries()
+        {
+            ICollection<Country> CountriesFound = _countryRepository.GetAll();
+            if (CountriesFound == null)
+            {
+                throw new ArgumentNullException("No product found in database");
+            }
+            else
+            {
+                return CountriesFound;
+            }
+        }
         public ICollection<Product> GetAllProduct()
         {
             ICollection<Product> productFound = _productRepository.GetAll();
@@ -253,45 +265,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 _productRepository.Update(product);
             }
         }
-        public OrderViewModel OrderToPlace()
-        {
-            // Retrieve the user's cart
-            Cart selectedCart = _cartRepository.GetCart(1); // Change the user ID to match your logic
-
-            if (selectedCart == null)
-            {
-                throw new InvalidOperationException("Cart is empty or not found.");
-            }
-
-            // Retrieve the items in the cart
-            List<ProductCart> cartItems = _productCartRepository.GetAll()
-                .Where(pc => pc.CartId == selectedCart.Id)
-                .ToList();
-
-            if (cartItems.Count == 0)
-            {
-                throw new InvalidOperationException("No items found in the cart.");
-            }
-
-            // Create a list of available countries
-            List<Country> availableCountries = _countryRepository.GetAll().ToList();
-
-            if (availableCountries.Count == 0)
-            {
-                throw new InvalidOperationException("No available countries found.");
-            }
-
-            // Calculate the total price of items in the cart
-            decimal totalPrice = cartItems.Sum(item => item.Product.Price * item.ProductQuantity);
-
-            // Create an OrderViewModel object to hold the data
-            return new OrderViewModel
-            {
-                CartItems = cartItems,
-                AvailableCountries = availableCountries,
-                TotalPrice = totalPrice
-            };
-        }
+    
 
         public Country GetCountryById(Guid countryId)
         {
@@ -339,6 +313,8 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
             OrderViewModel orderViewModel = new OrderViewModel()
             {
+                CartItems = cartItems,
+               
                 TotalPrice = FinalTotalPrice,
                 SelectedConversionRate = conversionRate,
                 SelectedTaxRate = taxRate,
@@ -347,9 +323,29 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             };
             return orderViewModel;
         }
+        public void ConfirmAddress(Order order)
+        {
+            _orderRepository.Add(order);
 
+        }
 
+        public void ClearCart()
+        {
+            _cartRepository.Clear();
 
+        }
+        public ICollection<Order> GetAllOrder()
+        {
+            ICollection<Order> orderFound = _orderRepository.GetAll();
+            if (orderFound == null)
+            {
+                throw new ArgumentNullException("No product found in database");
+            }
+            else
+            {
+                return orderFound;
+            }
+        }
 
     }
 
