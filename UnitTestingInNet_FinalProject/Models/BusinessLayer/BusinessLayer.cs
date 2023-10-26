@@ -22,35 +22,26 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             _orderRepository = orderRepository;
         }
 
-        public Product GetProductById(Guid Id)
-        {
-            Product productObtain = _productRepository.Get(Id);
-            if (productObtain == null)
-            {
-                throw new ArgumentNullException("Item Not Found");
-            }
-            return productObtain;
-        }
-
 
         public ICollection<Country> GetAllCountries()
         {
-            ICollection<Country> CountriesFound = _countryRepository.GetAll();
-            if (CountriesFound == null)
+            ICollection<Country> countriesFound = _countryRepository.GetAll();
+
+            if (countriesFound == null)
             {
-                throw new ArgumentNullException("No product found in database");
+                throw new NullReferenceException("No countries found in database");
             }
-            else
-            {
-                return CountriesFound;
-            }
+
+            return countriesFound;
         }
+
+
         public ICollection<Product> GetAllProduct()
         {
             ICollection<Product> productFound = _productRepository.GetAll();
             if (productFound == null)
             {
-                throw new ArgumentNullException("No product found in database");
+                throw new NullReferenceException("No product found in database");
             }
             else
             {
@@ -63,7 +54,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             {
                 if (string.IsNullOrWhiteSpace(key))
                 {
-                    throw new ArgumentException("Search key cannot be null or whitespace.", nameof(key));
+                    throw new NullReferenceException("Search key cannot be null or whitespace.");
                 }
 
                 if (_productRepository == null)
@@ -85,10 +76,14 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
         }
         public Cart GetCartById(Guid Id)
         {
+            if (Id == Guid.Empty)
+            {
+                throw new ArgumentException("Provided ID is empty.");
+            }
             Cart cartObtain = _cartRepository.Get(Id);
             if (cartObtain == null)
             {
-                throw new ArgumentNullException("Item Not Found");
+                throw new NullReferenceException("Item Not Found");
             }
             else
             {
@@ -118,6 +113,10 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
         {
             Cart selectedCart = _cartRepository.GetCart(1);
+            if(selectedCart == null)
+            {
+                throw new NullReferenceException("Selected Cart Not Found");
+            }
             ICollection<ProductCart> ProductInCarts = _productCartRepository.GetAll().Where(pc => pc.CartId == selectedCart.Id).ToList();
 
             // Manually include the related Product entities.
@@ -139,12 +138,12 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
         public void AddToCart(Guid productId, Guid cartId)
         {
-            if (productId == null)
+            if (productId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(productId), "Product ID not found.");
             }
 
-            if (cartId == null)
+            if (cartId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(cartId), "Cart ID not found.");
             }
@@ -279,7 +278,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
         public OrderViewModel ConfirmOrder(Guid countryId)
         {
             // Ensure the OrderViewModel is valid and contains necessary data
-            if (countryId == null )
+            if (countryId == Guid.Empty)
             {
                 throw new InvalidOperationException("Invalid order data.");
             }
