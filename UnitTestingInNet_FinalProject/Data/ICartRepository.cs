@@ -8,7 +8,7 @@ namespace UnitTestingInNet_FinalProject.Data
         ICollection<Cart> GetAll();
         void Add(Cart entity);
 
-        // Add a method for getting a cart by UserId
+        
         Cart GetCart(int userId);
         void Update(T entity);
         void Remove(Cart entity);

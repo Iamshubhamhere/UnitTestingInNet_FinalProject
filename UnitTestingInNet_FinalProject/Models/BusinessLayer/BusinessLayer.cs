@@ -93,17 +93,17 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
         public Cart GetCartForUser()
         {
-            // Try to get the cart with UserId equal to 1
+          
             Cart userCart = _cartRepository.GetCart(1);
 
             if (userCart == null)
             {
-                // If the cart doesn't exist, create a new one with UserId 1
+               
                 userCart = new Cart
                 {
                     UserId = 1
                 };
-                _cartRepository.Add(userCart); // Add the new cart to the repository
+                _cartRepository.Add(userCart); 
             }
 
             return userCart;
@@ -119,7 +119,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
             }
             ICollection<ProductCart> ProductInCarts = _productCartRepository.GetAll().Where(pc => pc.CartId == selectedCart.Id).ToList();
 
-            // Manually include the related Product entities.
+            
             foreach (var productCart in ProductInCarts)
             {
                 productCart.Product = _productRepository.Get(productCart.ProductId);
@@ -164,31 +164,31 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
             if (productToAdd.AvailableQuantity > 0)
             {
-                // Check if the product is already in the cart
+                
                 var existingCartItem = _productCartRepository.GetAll().FirstOrDefault(pc => pc.ProductId == productId && pc.CartId == cartId);
 
                 if (existingCartItem != null)
                 {
-                    // Increase the quantity in the cart
+                  
                     existingCartItem.ProductQuantity++;
                 }
                 else
                 {
-                    // Add a new cart item with a quantity of 1
+                   
                     ProductCart cartItem = new ProductCart
                     {
                         ProductId = productId,
                         CartId = cartId,
                         ProductQuantity = 1
                     };
-                    // Save the cartItem to the repository
+                 
                     _productCartRepository.Add(cartItem);
                 }
 
-                // Decrease the available quantity in the catalog page
+               
                 productToAdd.AvailableQuantity--;
 
-                // Update the cart and product repositories
+              
                 _cartRepository.Update(cartToAdd);
                 _productRepository.Update(productToAdd);
             }
@@ -200,7 +200,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
         public void IncreaseProductQuantity(Guid productCartId)
         {
-            // Retrieve the ProductCart entity
+           
             ProductCart productCart = _productCartRepository.Get(productCartId);
 
             if (productCart == null)
@@ -208,7 +208,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 throw new Exception("Product cart not found.");
             }
 
-            // Retrieve the related Product entity
+           
             Product product = _productRepository.Get(productCart.ProductId);
 
             if (product.AvailableQuantity > 0)
@@ -216,10 +216,10 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 product.AvailableQuantity--;
                 productCart.ProductQuantity++;
 
-                // Update the Product entity in your repository
+               
                 _productRepository.Update(product);
 
-                // Update the ProductCart entity in your repository
+               
                 _productCartRepository.Update(productCart);
             }
             else
@@ -230,7 +230,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
 
         public void DecreaseProductQuantity(Guid productCartId)
         {
-            // Retrieve the ProductCart entity
+          
             ProductCart productCart = _productCartRepository.Get(productCartId);
 
             if (productCart == null)
@@ -238,7 +238,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 throw new Exception("Product cart not found.");
             }
 
-            // Retrieve the related Product entity
+          
             Product product = _productRepository.Get(productCart.ProductId);
 
             if (productCart.ProductQuantity > 1)
@@ -246,21 +246,21 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 product.AvailableQuantity++;
                 productCart.ProductQuantity--;
 
-                // Update the Product entity in your repository
+               
                 _productRepository.Update(product);
 
-                // Update the ProductCart entity in your repository
+         
                 _productCartRepository.Update(productCart);
             }
             else
             {
-                // Remove the product cart when the quantity becomes 0
+               
                 _productCartRepository.Remove(productCart);
 
-                // Restore the available quantity of the product
+             
                 product.AvailableQuantity++;
 
-                // Update the Product entity in your repository
+              
                 _productRepository.Update(product);
             }
         }
@@ -277,15 +277,14 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
         }
         public OrderViewModel ConfirmOrder(Guid countryId)
         {
-            // Ensure the OrderViewModel is valid and contains necessary data
+         
             if (countryId == Guid.Empty)
             {
                 throw new InvalidOperationException("Invalid order data.");
             }
 
-            // Retrieve the user's cart
-            Cart userCart = _cartRepository.GetCart(1); // This needs to match the logic you use to identify the user's cart
-                                                        // Retrieve the items in the cart
+          
+            Cart userCart = _cartRepository.GetCart(1); 
             if (userCart == null)
             {
                 throw new InvalidOperationException("Cart is empty or not found.");
@@ -295,7 +294,7 @@ namespace UnitTestingInNet_FinalProject.Models.BusinessLayer
                 .ToList();
 
 
-            // Retrieve the selected country's details
+           
             Country selectedCountry = _countryRepository.Get(countryId);
             if (selectedCountry == null)
             {

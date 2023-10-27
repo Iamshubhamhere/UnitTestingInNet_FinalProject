@@ -145,7 +145,7 @@ namespace UnitTestingInNet_FinalProject.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception (e.g., log it and return an error view)
+                
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
